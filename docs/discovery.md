@@ -2,7 +2,7 @@
 
 `myc` can render discovery artifacts for NIP-46 and can explicitly publish a NIP-89 handler event. Discovery is operator-driven. It is not published automatically at startup.
 
-Use [config.example.toml](/Users/treesap/dev/radroots/radroots-platform-v1/domains/platform/services/myc/config.example.toml) as the checked starting point for a discovery-enabled configuration.
+Use [`config.example.toml`](../config.example.toml) as the checked starting point for a discovery-enabled configuration.
 
 ## commands
 
@@ -36,6 +36,12 @@ Export a deterministic discovery bundle for deployment tooling:
 
 ```bash
 cargo run -- discovery export-bundle --out ./dist/discovery
+```
+
+Verify an exported discovery bundle:
+
+```bash
+cargo run -- discovery verify-bundle --dir ./dist/discovery
 ```
 
 ## boundary
