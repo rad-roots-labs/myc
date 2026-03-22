@@ -119,6 +119,7 @@ Each entry in `relay_states` now separates availability from semantic live state
 - when every available relay is already `matched`, `myc` skips publication unless `--force` is set
 - a mixed publish result is surfaced explicitly: `repair_results` shows per-relay `repaired`, `failed`, `unchanged`, or `skipped`, and `remaining_repair_relays` lists the relays that still need a follow-up repair run
 - `repair_summary` provides a compact operator view of those per-relay outcomes without having to scan the full relay list
+- every `refresh-nip89` run returns an `attempt_id` so operators can correlate later audit and repair follow-up against one logical refresh attempt
 
 This makes two different conflict shapes visible to operators:
 
@@ -137,6 +138,18 @@ If at least one relay is available, `inspect-live-nip89` and `diff-live-nip89` s
 If every configured discovery relay is unavailable, discovery sync fails as a hard error instead of pretending the live state is `missing`.
 
 `audit summary --scope operation` distinguishes aggregate publish failures from per-relay repair failures. A mixed targeted refresh can therefore report a successful aggregate publish together with non-zero repair rejection counts when only some selected relays accepted the repair.
+
+Discovery repair attempts can be queried directly:
+
+- `cargo run -- audit latest-discovery-repair` returns the newest refresh attempt summary, including the repair summary, failed relays, remaining repair relays, and aggregate publish result
+- `cargo run -- audit discovery-repair-attempt --attempt-id <attempt-id>` returns the summary for one specific attempt
+- `cargo run -- audit discovery-repair-attempt --attempt-id <attempt-id> --view records` returns the raw runtime operation audit records for that attempt
+
+This keeps rolling-window audit totals and attempt-scoped repair history separate:
+
+- `audit summary --scope operation` answers "what has happened recently across retained audit records?"
+- `audit latest-discovery-repair` answers "what happened on the most recent discovery repair attempt?"
+- `audit discovery-repair-attempt --attempt-id ...` answers "what happened on this exact refresh run?"
 
 Because relay fetch is concurrent, partial outages are bounded by the configured discovery connect timeout rather than scaling linearly with relay count.
 
