@@ -118,6 +118,7 @@ Each entry in `relay_states` now separates availability from semantic live state
 - relays that are themselves `conflicted` still require `--force`
 - when every available relay is already `matched`, `myc` skips publication unless `--force` is set
 - a mixed publish result is surfaced explicitly: `repair_results` shows per-relay `repaired`, `failed`, `unchanged`, or `skipped`, and `remaining_repair_relays` lists the relays that still need a follow-up repair run
+- `repair_summary` provides a compact operator view of those per-relay outcomes without having to scan the full relay list
 
 This makes two different conflict shapes visible to operators:
 
@@ -134,6 +135,8 @@ Cross-relay divergence does not require `--force` by itself. If the divergence i
 If at least one relay is available, `inspect-live-nip89` and `diff-live-nip89` still return partial healthy state plus unavailable-relay details.
 
 If every configured discovery relay is unavailable, discovery sync fails as a hard error instead of pretending the live state is `missing`.
+
+`audit summary --scope operation` distinguishes aggregate publish failures from per-relay repair failures. A mixed targeted refresh can therefore report a successful aggregate publish together with non-zero repair rejection counts when only some selected relays accepted the repair.
 
 Because relay fetch is concurrent, partial outages are bounded by the configured discovery connect timeout rather than scaling linearly with relay count.
 
