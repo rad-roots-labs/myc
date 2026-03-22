@@ -32,13 +32,13 @@ Publish the signed NIP-89 handler event to the configured discovery relays:
 cargo run -- discovery publish-nip89
 ```
 
-Fetch the latest live NIP-89 handler event for the configured discovery identity:
+Fetch the grouped live NIP-89 handler state for the configured discovery identity:
 
 ```bash
 cargo run -- discovery inspect-live-nip89
 ```
 
-Diff the local discovery handler state against the latest live NIP-89 handler event:
+Diff the local discovery handler state against the grouped live NIP-89 handler state:
 
 ```bash
 cargo run -- discovery diff-live-nip89
@@ -88,17 +88,19 @@ The bundle export writes:
 
 ## lifecycle
 
-`inspect-live-nip89` fetches the latest published handler state from the configured discovery relays.
+`inspect-live-nip89` fetches all matching published handler events from the configured discovery relays and groups semantic duplicates together.
 
-`diff-live-nip89` compares the local rendered handler against the latest live handler and reports one of:
+`diff-live-nip89` compares the local rendered handler against the grouped live handler state and reports one of:
 
 - `missing`
 - `matched`
 - `drifted`
+- `conflicted`
 
 `refresh-nip89` uses that same compare step:
 
 - when live state is `missing` or `drifted`, `myc` republishes the signed handler event
+- when live state is `conflicted`, `myc` refuses to publish unless `--force` is set
 - when live state is `matched`, `myc` skips publication unless `--force` is set
 
-Discovery compare, skip, and publish decisions are recorded in the runtime audit log.
+Discovery compare, conflict, skip, and publish decisions are recorded in the runtime audit log.
