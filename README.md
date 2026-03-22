@@ -32,6 +32,14 @@ _nostr remote signer_
 
 Mycorrhiza is a Nostr remote signer that implements the NIP-46 specification. It is built to enable delegated account access and secure signing flows.
 
+## Validation
+
+Run the relay-backed NIP-46 proof lane from the repo root:
+
+```bash
+cargo test --locked --test nip46_e2e
+```
+
 ## License
 
 This project is licensed under the AGPL-3.0.
