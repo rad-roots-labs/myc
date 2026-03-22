@@ -121,6 +121,7 @@ Each entry in `relay_states` now separates availability from semantic live state
 - `repair_summary` provides a compact operator view of those per-relay outcomes without having to scan the full relay list
 - every `refresh-nip89` run returns an `attempt_id` so operators can correlate later audit and repair follow-up against one logical refresh attempt
 - when `refresh-nip89` fails after allocating an attempt, stderr includes that `attempt_id` directly so the failed run can be inspected without guessing which attempt was latest
+- failed and blocked refresh attempts now keep structured relay actionability in audit output: `planned_repair_relays`, `blocked_relays`, and `blocked_reason`
 
 This makes two different conflict shapes visible to operators:
 
@@ -142,14 +143,22 @@ If every configured discovery relay is unavailable, discovery sync fails as a ha
 
 Discovery repair attempts can be queried directly:
 
-- `cargo run -- audit latest-discovery-repair` returns the newest refresh attempt summary, including the repair summary, failed relays, remaining repair relays, and aggregate publish result
+- `cargo run -- audit latest-discovery-repair` returns the newest refresh attempt summary, including the repair summary, planned repair relays, blocked relays, remaining repair relays, and aggregate publish result
 - `cargo run -- audit discovery-repair-attempt --attempt-id <attempt-id>` returns the summary for one specific attempt
 - `cargo run -- audit discovery-repair-attempt --attempt-id <attempt-id> --view records` returns the raw runtime operation audit records for that attempt
+
+Blocked refresh attempts are summarized explicitly:
+
+- `planned_repair_relays` lists the relays `myc` intended to repair or would repair if the operator reruns with `--force`
+- `blocked_relays` lists the relays that prevented the current refresh run from proceeding
+- `blocked_reason` distinguishes cases such as `all_relays_unavailable`, `unavailable_relays`, and `conflicted_relays`
+- `remaining_repair_relays` continues to track relays that still need follow-up after a partial publish, but blocked runs no longer rely on rejected repair records alone
 
 If a refresh fails, `myc` prints the attempt id and an exact follow-up command:
 
 - `myc: discovery repair attempt id: <attempt-id>`
 - `myc: inspect with \`myc audit discovery-repair-attempt --attempt-id <attempt-id>\``
+- `myc: discovery repair attempt json: {"attempt_id":"<attempt-id>","inspect_args":["audit","discovery-repair-attempt","--attempt-id","<attempt-id>"]}`
 
 This keeps rolling-window audit totals and attempt-scoped repair history separate:
 
