@@ -120,6 +120,7 @@ Each entry in `relay_states` now separates availability from semantic live state
 - a mixed publish result is surfaced explicitly: `repair_results` shows per-relay `repaired`, `failed`, `unchanged`, or `skipped`, and `remaining_repair_relays` lists the relays that still need a follow-up repair run
 - `repair_summary` provides a compact operator view of those per-relay outcomes without having to scan the full relay list
 - every `refresh-nip89` run returns an `attempt_id` so operators can correlate later audit and repair follow-up against one logical refresh attempt
+- when `refresh-nip89` fails after allocating an attempt, stderr includes that `attempt_id` directly so the failed run can be inspected without guessing which attempt was latest
 
 This makes two different conflict shapes visible to operators:
 
@@ -144,6 +145,11 @@ Discovery repair attempts can be queried directly:
 - `cargo run -- audit latest-discovery-repair` returns the newest refresh attempt summary, including the repair summary, failed relays, remaining repair relays, and aggregate publish result
 - `cargo run -- audit discovery-repair-attempt --attempt-id <attempt-id>` returns the summary for one specific attempt
 - `cargo run -- audit discovery-repair-attempt --attempt-id <attempt-id> --view records` returns the raw runtime operation audit records for that attempt
+
+If a refresh fails, `myc` prints the attempt id and an exact follow-up command:
+
+- `myc: discovery repair attempt id: <attempt-id>`
+- `myc: inspect with \`myc audit discovery-repair-attempt --attempt-id <attempt-id>\``
 
 This keeps rolling-window audit totals and attempt-scoped repair history separate:
 
