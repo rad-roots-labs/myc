@@ -88,7 +88,7 @@ The bundle export writes:
 
 ## lifecycle
 
-`inspect-live-nip89` fetches all matching published handler events from the configured discovery relays and groups semantic duplicates together.
+`inspect-live-nip89` fetches matching published handler events from each configured discovery relay separately, preserves relay provenance on grouped live events, and also returns per-relay live state.
 
 `diff-live-nip89` compares the local rendered handler against the grouped live handler state and reports one of:
 
@@ -97,10 +97,20 @@ The bundle export writes:
 - `drifted`
 - `conflicted`
 
+`diff-live-nip89` and `refresh-nip89` also return:
+
+- `relay_states` with per-relay `missing`, `matched`, `drifted`, or `conflicted` status
+- `relay_summary` with compact relay lists for each status
+
 `refresh-nip89` uses that same compare step:
 
 - when live state is `missing` or `drifted`, `myc` republishes the signed handler event
 - when live state is `conflicted`, `myc` refuses to publish unless `--force` is set
 - when live state is `matched`, `myc` skips publication unless `--force` is set
+
+This makes two different conflict shapes visible to operators:
+
+- cross-relay divergence: different relays disagree, but each relay can still be individually `matched` or `drifted`
+- stale relay history: a single relay reports multiple incompatible grouped live states and is itself `conflicted`
 
 Discovery compare, conflict, skip, and publish decisions are recorded in the runtime audit log.
