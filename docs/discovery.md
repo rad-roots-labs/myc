@@ -32,6 +32,30 @@ Publish the signed NIP-89 handler event to the configured discovery relays:
 cargo run -- discovery publish-nip89
 ```
 
+Fetch the latest live NIP-89 handler event for the configured discovery identity:
+
+```bash
+cargo run -- discovery inspect-live-nip89
+```
+
+Diff the local discovery handler state against the latest live NIP-89 handler event:
+
+```bash
+cargo run -- discovery diff-live-nip89
+```
+
+Refresh the live NIP-89 handler event only when local discovery state has changed:
+
+```bash
+cargo run -- discovery refresh-nip89
+```
+
+Force a refresh publish even when the latest live handler already matches local state:
+
+```bash
+cargo run -- discovery refresh-nip89 --force
+```
+
 Export a deterministic discovery bundle for deployment tooling:
 
 ```bash
@@ -61,3 +85,20 @@ The bundle export writes:
 - `bundle.json` with stable discovery metadata and artifact paths
 - `.well-known/nostr.json` as the NIP-05 artifact
 - `nip89-handler.json` as the unsigned handler specification for deployment tooling
+
+## lifecycle
+
+`inspect-live-nip89` fetches the latest published handler state from the configured discovery relays.
+
+`diff-live-nip89` compares the local rendered handler against the latest live handler and reports one of:
+
+- `missing`
+- `matched`
+- `drifted`
+
+`refresh-nip89` uses that same compare step:
+
+- when live state is `missing` or `drifted`, `myc` republishes the signed handler event
+- when live state is `matched`, `myc` skips publication unless `--force` is set
+
+Discovery compare, skip, and publish decisions are recorded in the runtime audit log.
