@@ -117,6 +117,7 @@ Each entry in `relay_states` now separates availability from semantic live state
 - relays that are `missing` or `drifted` are refreshed selectively without touching already matched relays
 - relays that are themselves `conflicted` still require `--force`
 - when every available relay is already `matched`, `myc` skips publication unless `--force` is set
+- a mixed publish result is surfaced explicitly: `repair_results` shows per-relay `repaired`, `failed`, `unchanged`, or `skipped`, and `remaining_repair_relays` lists the relays that still need a follow-up repair run
 
 This makes two different conflict shapes visible to operators:
 
