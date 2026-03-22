@@ -90,6 +90,8 @@ The bundle export writes:
 
 `inspect-live-nip89` fetches matching published handler events from each configured discovery relay separately, preserves relay provenance on grouped live events, and also returns per-relay live state.
 
+Discovery relay fetch runs concurrently, but `relay_states` and grouped output are still returned in deterministic normalized relay order.
+
 Each entry in `relay_states` now separates availability from semantic live state:
 
 - `fetch_status` is `available` or `unavailable`
@@ -128,5 +130,7 @@ This makes two different conflict shapes visible to operators:
 If at least one relay is available, `inspect-live-nip89` and `diff-live-nip89` still return partial healthy state plus unavailable-relay details.
 
 If every configured discovery relay is unavailable, discovery sync fails as a hard error instead of pretending the live state is `missing`.
+
+Because relay fetch is concurrent, partial outages are bounded by the configured discovery connect timeout rather than scaling linearly with relay count.
 
 Discovery compare, conflict, skip, and publish decisions are recorded in the runtime audit log.
