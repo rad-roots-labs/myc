@@ -2,7 +2,7 @@
 
 `myc` can render discovery artifacts for NIP-46 and can explicitly publish a NIP-89 handler event. Discovery is operator-driven. It is not published automatically at startup.
 
-Use [`config.example.toml`](../config.example.toml) as the checked starting point for a discovery-enabled configuration.
+Use [`.env.example`](../.env.example) as the checked starting point for a discovery-enabled runtime configuration, then copy it to `.env` and replace the example values with real local values before running `myc`.
 
 ## commands
 
