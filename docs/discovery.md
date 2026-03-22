@@ -113,14 +113,17 @@ Each entry in `relay_states` now separates availability from semantic live state
 `refresh-nip89` uses that same compare step:
 
 - when any configured discovery relay is unavailable, `myc` refuses to refresh unless `--force` is set
-- when live state is `missing` or `drifted`, `myc` republishes the signed handler event
-- when live state is `conflicted`, `myc` refuses to publish unless `--force` is set
-- when live state is `matched`, `myc` skips publication unless `--force` is set
+- `myc` builds a relay-targeted refresh plan from per-relay `live_status`, instead of republishing to every configured relay
+- relays that are `missing` or `drifted` are refreshed selectively without touching already matched relays
+- relays that are themselves `conflicted` still require `--force`
+- when every available relay is already `matched`, `myc` skips publication unless `--force` is set
 
 This makes two different conflict shapes visible to operators:
 
 - cross-relay divergence: different relays disagree, but each relay can still be individually `matched` or `drifted`
 - stale relay history: a single relay reports multiple incompatible grouped live states and is itself `conflicted`
+
+Cross-relay divergence does not require `--force` by itself. If the divergence is only `matched` versus `drifted`, `refresh-nip89` repairs the drifted relays and leaves matched relays alone.
 
 `missing` and `unavailable` are intentionally different:
 
