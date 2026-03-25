@@ -58,6 +58,16 @@ Policy and auth are typed:
 - `MYC_POLICY_PERMISSION_CEILING` and `MYC_POLICY_ALLOWED_SIGN_EVENT_KINDS` bound what can ever be granted or executed
 - `MYC_POLICY_AUTH_URL`, `MYC_POLICY_AUTH_PENDING_TTL_SECS`, `MYC_POLICY_AUTHORIZED_TTL_SECS`, and `MYC_POLICY_REAUTH_AFTER_INACTIVITY_SECS` control auth challenge expiry and trusted-session reauth
 
+Observability is local-only:
+
+- `MYC_OBSERVABILITY_ENABLED=true` enables the read-only admin surface
+- `MYC_OBSERVABILITY_BIND_ADDR` must stay on a loopback address such as `127.0.0.1:9460`
+- `myc status --view summary|full` emits machine-readable service status from the CLI
+- `myc metrics --format json|prometheus` emits stable runtime counters from retained audit state
+- when enabled, the local admin server exposes `/healthz`, `/readyz`, `/status`, and `/metrics`
+
+See [`docs/operability.md`](./docs/operability.md) for the status, metrics, and endpoint contract.
+
 ## Validation
 
 Run the full repo-root validation lane:
@@ -73,6 +83,13 @@ Run the relay-backed NIP-46 proof lane directly when you want the transport/disc
 
 ```bash
 cargo test --locked --test nip46_e2e
+```
+
+Run the operability-focused lanes directly when you want CLI and admin-surface proof:
+
+```bash
+cargo test --locked --test operability_cli
+cargo test --locked --test operability_server
 ```
 
 ## License
