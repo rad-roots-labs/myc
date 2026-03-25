@@ -51,6 +51,13 @@ Transport delivery is explicit:
 - `MYC_TRANSPORT_DELIVERY_POLICY=all` requires every configured transport relay to acknowledge
 - `MYC_TRANSPORT_PUBLISH_MAX_ATTEMPTS`, `MYC_TRANSPORT_PUBLISH_INITIAL_BACKOFF_MILLIS`, and `MYC_TRANSPORT_PUBLISH_MAX_BACKOFF_MILLIS` control bounded retry and backoff for listener responses, `connect accept`, auth replay, and discovery publication
 
+Policy and auth are typed:
+
+- `MYC_POLICY_CONNECTION_APPROVAL` sets the default connect policy for unknown clients
+- `MYC_POLICY_TRUSTED_CLIENT_PUBKEYS` and `MYC_POLICY_DENIED_CLIENT_PUBKEYS` override that default per client pubkey
+- `MYC_POLICY_PERMISSION_CEILING` and `MYC_POLICY_ALLOWED_SIGN_EVENT_KINDS` bound what can ever be granted or executed
+- `MYC_POLICY_AUTH_URL`, `MYC_POLICY_AUTH_PENDING_TTL_SECS`, `MYC_POLICY_AUTHORIZED_TTL_SECS`, and `MYC_POLICY_REAUTH_AFTER_INACTIVITY_SECS` control auth challenge expiry and trusted-session reauth
+
 ## Validation
 
 Run the full repo-root validation lane:
