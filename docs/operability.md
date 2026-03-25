@@ -54,6 +54,8 @@ The server is read-only. It does not expose connection approval, auth, or discov
 
 `/metrics` returns the same Prometheus-style text as `myc metrics --format prometheus`.
 
+Status output includes custody state for the signer, managed user, and discovery app identities, including the configured backend and whether each identity resolved successfully.
+
 ## semantics
 
 Top-level runtime status is one of:

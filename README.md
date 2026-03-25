@@ -58,12 +58,23 @@ Policy and auth are typed:
 - `MYC_POLICY_PERMISSION_CEILING` and `MYC_POLICY_ALLOWED_SIGN_EVENT_KINDS` bound what can ever be granted or executed
 - `MYC_POLICY_AUTH_URL`, `MYC_POLICY_AUTH_PENDING_TTL_SECS`, `MYC_POLICY_AUTHORIZED_TTL_SECS`, and `MYC_POLICY_REAUTH_AFTER_INACTIVITY_SECS` control auth challenge expiry and trusted-session reauth
 
+Custody is backend-aware:
+
+- filesystem remains the default signer, user, and discovery app identity backend
+- `MYC_PATHS_SIGNER_IDENTITY_BACKEND` and `MYC_PATHS_USER_IDENTITY_BACKEND` support `filesystem` and `os_keyring`
+- `MYC_DISCOVERY_APP_IDENTITY_BACKEND` may be left unset to reuse the signer identity, or set explicitly for a dedicated filesystem or keyring-backed discovery app identity
+- `*_KEYRING_ACCOUNT_ID` selects the public identity id stored in the local keyring vault
+- `*_KEYRING_SERVICE_NAME` scopes the local keyring service name
+- `*_PROFILE_PATH` may be set for keyring-backed identities when local profile metadata should be merged onto the loaded secret
+- see [`docs/custody.md`](./docs/custody.md) for the backend contract and migration guidance
+
 Observability is local-only:
 
 - `MYC_OBSERVABILITY_ENABLED=true` enables the read-only admin surface
 - `MYC_OBSERVABILITY_BIND_ADDR` must stay on a loopback address such as `127.0.0.1:9460`
 - `myc status --view summary|full` emits machine-readable service status from the CLI
 - `myc metrics --format json|prometheus` emits stable runtime counters from retained audit state
+- `myc status` includes custody backend and resolution state for signer, user, and discovery app identities
 - when enabled, the local admin server exposes `/healthz`, `/readyz`, `/status`, and `/metrics`
 
 See [`docs/operability.md`](./docs/operability.md) for the status, metrics, and endpoint contract.

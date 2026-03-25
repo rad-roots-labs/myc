@@ -19,6 +19,7 @@ clap = { version = "4.5", features = ["derive"] }
 nostr = { version = "0.44.2", features = ["nip04", "nip44"] }
 radroots-identity = { path = "../../../../foundation/libs/rs/radroots/crates/identity" }
 radroots-log = { path = "../../../../foundation/libs/rs/radroots/crates/log" }
+radroots-nostr-accounts = { path = "../../../../foundation/libs/rs/radroots/crates/nostr-accounts", default-features = false, features = ["std", "memory-vault", "os-keyring"] }
 radroots-nostr = { path = "../../../../foundation/libs/rs/radroots/crates/nostr", features = ["client", "events"] }
 radroots-nostr-connect = { path = "../../../../foundation/libs/rs/radroots/crates/nostr-connect" }
 radroots-nostr-signer = { path = "../../../../foundation/libs/rs/radroots/crates/nostr-signer" }
