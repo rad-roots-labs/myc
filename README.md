@@ -44,9 +44,25 @@ cp .env.example .env
 
 Then replace the example paths, relays, and discovery host with real local values before running the service.
 
+Transport delivery is explicit:
+
+- `MYC_TRANSPORT_DELIVERY_POLICY=any` succeeds when at least one configured transport relay acknowledges a publish
+- `MYC_TRANSPORT_DELIVERY_POLICY=quorum` requires `MYC_TRANSPORT_DELIVERY_QUORUM`
+- `MYC_TRANSPORT_DELIVERY_POLICY=all` requires every configured transport relay to acknowledge
+- `MYC_TRANSPORT_PUBLISH_MAX_ATTEMPTS`, `MYC_TRANSPORT_PUBLISH_INITIAL_BACKOFF_MILLIS`, and `MYC_TRANSPORT_PUBLISH_MAX_BACKOFF_MILLIS` control bounded retry and backoff for listener responses, `connect accept`, auth replay, and discovery publication
+
 ## Validation
 
-Run the relay-backed NIP-46 proof lane from the repo root:
+Run the full repo-root validation lane:
+
+```bash
+cargo metadata --format-version 1 --no-deps
+cargo check --locked
+cargo test --locked
+cargo fmt --all --check
+```
+
+Run the relay-backed NIP-46 proof lane directly when you want the transport/discovery end-to-end suite:
 
 ```bash
 cargo test --locked --test nip46_e2e

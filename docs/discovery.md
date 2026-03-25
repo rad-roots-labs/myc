@@ -32,6 +32,8 @@ Publish the signed NIP-89 handler event to the configured discovery relays:
 cargo run -- discovery publish-nip89
 ```
 
+Discovery publication uses the configured transport delivery settings. `any` requires one relay acknowledgement, `quorum` requires `MYC_TRANSPORT_DELIVERY_QUORUM`, and `all` requires every targeted relay to acknowledge before the publish is treated as successful.
+
 Fetch the grouped live NIP-89 handler state for the configured discovery identity:
 
 ```bash
@@ -122,6 +124,7 @@ Each entry in `relay_states` now separates availability from semantic live state
 - every `refresh-nip89` run returns an `attempt_id` so operators can correlate later audit and repair follow-up against one logical refresh attempt
 - when `refresh-nip89` fails after allocating an attempt, stderr includes that `attempt_id` directly so the failed run can be inspected without guessing which attempt was latest
 - failed and blocked refresh attempts now keep structured relay actionability in audit output: `planned_repair_relays`, `blocked_relays`, and `blocked_reason`
+- discovery publish and refresh audit records now also include the configured delivery policy, the required acknowledgement threshold, and the number of publish attempts used to reach the final outcome
 
 This makes two different conflict shapes visible to operators:
 
