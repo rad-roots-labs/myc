@@ -13,12 +13,13 @@ Current repo-local compatibility coverage:
 - `sign_event`, `nip04_encrypt`, `nip04_decrypt`, `nip44_encrypt`, and `nip44_decrypt` over a live approved session while still using the upstream `nostr` request and response envelope types
 - explicit-approval pending state
 - `auth_url` challenge responses
+- response matching remains stable even when the relay already contains unrelated signer-authored `kind:24133` events
 
 Current known boundary:
 
 - `switch_relays` remains covered by the native `myc` relay harness, not the upstream `nostr` crate lane, because the pinned `nostr` `0.44.2` NIP-46 surface does not expose that request type
 - the pinned upstream `nostr` `0.44.2` connect request shape does not carry requested permissions, so the method-compatibility lane seeds an equivalent approved signer session before issuing standard upstream method requests
-- the app remote signer product-client onboarding proof is maintained outside this repo because it validates the consumer-side service boundary rather than a repo-local unit or integration seam
+- the app remote signer product-client onboarding proof is maintained outside this repo because it validates the consumer-side service boundary rather than a repo-local unit or integration seam; that lane covers bunker and discovery-url initiation, pending approval, and approved identity resolution through the current client poll flow
 
 Run the repo-local compatibility lane from this repo root with:
 
