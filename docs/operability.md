@@ -56,6 +56,8 @@ The server is read-only. It does not expose connection approval, auth, or discov
 
 Status output includes custody state for the signer, managed user, and discovery app identities, including the configured backend and whether each identity resolved successfully.
 
+Status output also includes persistence state for signer state and runtime audit, including backend, resolved path, and SQLite schema readiness when SQLite is enabled. See [persistence.md](./persistence.md) for the persistence operator contract.
+
 ## semantics
 
 Top-level runtime status is one of:
