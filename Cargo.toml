@@ -22,7 +22,7 @@ radroots-log = { path = "../../../../foundation/libs/rs/radroots/crates/log" }
 radroots-nostr-accounts = { path = "../../../../foundation/libs/rs/radroots/crates/nostr-accounts", default-features = false, features = ["std", "memory-vault", "os-keyring"] }
 radroots-nostr = { path = "../../../../foundation/libs/rs/radroots/crates/nostr", features = ["client", "events"] }
 radroots-nostr-connect = { path = "../../../../foundation/libs/rs/radroots/crates/nostr-connect" }
-radroots-nostr-signer = { path = "../../../../foundation/libs/rs/radroots/crates/nostr-signer" }
+radroots-nostr-signer = { path = "../../../../foundation/libs/rs/radroots/crates/nostr-signer", features = ["native"] }
 radroots-sql-core = { path = "../../../../foundation/libs/rs/radroots/crates/sql-core", features = ["native"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
