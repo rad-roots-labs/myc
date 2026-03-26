@@ -51,6 +51,12 @@ Transport delivery is explicit:
 - `MYC_TRANSPORT_DELIVERY_POLICY=all` requires every configured transport relay to acknowledge
 - `MYC_TRANSPORT_PUBLISH_MAX_ATTEMPTS`, `MYC_TRANSPORT_PUBLISH_INITIAL_BACKOFF_MILLIS`, and `MYC_TRANSPORT_PUBLISH_MAX_BACKOFF_MILLIS` control bounded retry and backoff for listener responses, `connect accept`, auth replay, and discovery publication
 
+Publish flows are also durable:
+
+- listener responses, `connect accept`, auth replay, and discovery publication are written to a persistent delivery outbox before relay send
+- `myc run` performs startup recovery for unfinished delivery jobs before the service is treated as ready
+- see [`docs/delivery.md`](./docs/delivery.md) for the durable-delivery and restart-recovery contract
+
 Policy and auth are typed:
 
 - `MYC_POLICY_CONNECTION_APPROVAL` sets the default connect policy for unknown clients
@@ -78,6 +84,7 @@ Observability is local-only:
 - when enabled, the local admin server exposes `/healthz`, `/readyz`, `/status`, and `/metrics`
 
 See [`docs/operability.md`](./docs/operability.md) for the status, metrics, and endpoint contract.
+See [`docs/delivery.md`](./docs/delivery.md) for delivery outbox, startup recovery, and restart semantics.
 
 ## Validation
 

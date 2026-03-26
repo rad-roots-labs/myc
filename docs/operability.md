@@ -58,6 +58,8 @@ Status output includes custody state for the signer, managed user, and discovery
 
 Status output also includes persistence state for signer state and runtime audit, including backend, resolved path, and SQLite schema readiness when SQLite is enabled. See [persistence.md](./persistence.md) for the persistence operator contract.
 
+Status output also includes `delivery_outbox`, which reports the durable publish queue path, unfinished job counts, blocked job counts, stuck thresholds, and the last startup recovery result. See [delivery.md](./delivery.md) for the durable-delivery contract.
+
 ## semantics
 
 Top-level runtime status is one of:
@@ -85,6 +87,12 @@ Discovery availability affects health but not transport readiness:
 - if discovery is disabled, it does not affect status
 - if discovery is enabled and some discovery relays are unavailable, the service is `degraded`
 
+Delivery outbox health affects readiness separately from relay reachability:
+
+- blocked critical outbox jobs make the service `unready`
+- blocked discovery-only outbox jobs make the service `degraded` but still `ready=true`
+- the latest startup recovery summary is exposed as `delivery_outbox.last_recovery`
+
 ## endpoint codes
 
 - `/healthz` returns `200` for `healthy` and `degraded`, `503` for `unready`
@@ -105,5 +113,8 @@ It includes:
 - discovery repair success and rejection totals
 - unavailable-operation totals
 - auth replay restore totals
+- delivery recovery success and rejection totals
+- delivery outbox totals by state
+- unfinished and blocked delivery outbox totals, including critical subsets
 
 Because the metrics are built from retained audit state, they reflect the retained audit window rather than a separate in-memory counter stream.

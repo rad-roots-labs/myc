@@ -7,6 +7,8 @@ Current backends:
 - signer state: `json_file`, `sqlite`
 - runtime audit: `jsonl_file`, `sqlite`
 
+The durable delivery outbox is currently always SQLite-backed.
+
 `json_file` and `jsonl_file` remain supported for lightweight local use and backward compatibility.
 
 For production deployment, the recommended path is:
@@ -28,7 +30,11 @@ Runtime audit:
 - `jsonl_file` -> `<state_dir>/audit/operations.jsonl`
 - `sqlite` -> `<state_dir>/audit/operations.sqlite`
 
-`myc status --view full` reports the active persistence backends, resolved paths, and SQLite schema state when SQLite is enabled.
+Delivery outbox:
+
+- `sqlite` -> `<state_dir>/delivery-outbox.sqlite`
+
+`myc status --view full` reports the active persistence backends, resolved paths, and SQLite schema state when SQLite is enabled. Delivery outbox path and health are reported separately in the `delivery_outbox` section. See [delivery.md](./delivery.md).
 
 ## migration
 
@@ -93,6 +99,7 @@ Restore rules:
 - do not mix signer-state from one signer identity with a different configured signer identity
 - if file-based identities are used, restore those identity files together with the state directory
 - if keyring-backed identities are used, restore the database files and separately ensure the expected keyring entries exist
+- if durable delivery is enabled, restore the delivery outbox together with signer state and runtime audit so unfinished publish work can still be recovered correctly
 
 ## recommended rollout
 
