@@ -70,8 +70,9 @@ The safest migration flow is:
 1. keep the existing JSON and JSONL files in place
 2. update the target config to `sqlite` backends
 3. run `myc persistence import-json-to-sqlite`
-4. run `myc status --view full` and verify the `persistence` section is ready
-5. start `myc run` against the SQLite-backed config
+4. run `myc persistence verify-restore`
+5. run `myc status --view full` and verify the `persistence` section is ready
+6. start `myc run` against the SQLite-backed config
 
 ## sqlite contract
 
@@ -100,6 +101,19 @@ Restore rules:
 - if file-based identities are used, restore those identity files together with the state directory
 - if keyring-backed identities are used, restore the database files and separately ensure the expected keyring entries exist
 - if durable delivery is enabled, restore the delivery outbox together with signer state and runtime audit so unfinished publish work can still be recovered correctly
+
+After restoring files and identities, run:
+
+```bash
+cargo run -- persistence verify-restore
+```
+
+`verify-restore` is a strict preflight for migrated or restored deployments. It verifies:
+
+- the configured signer-state, runtime-audit, and delivery-outbox files exist
+- signer and user identities resolve from the current custody configuration
+- persisted signer identity matches the configured signer identity
+- unfinished delivery outbox jobs and persisted signer publish workflows are internally coherent before startup recovery runs
 
 ## recommended rollout
 

@@ -119,5 +119,6 @@ These counters are currently derived from retained runtime audit plus current ou
 - a blocked critical outbox job is a production issue because signer-facing request completion may be incomplete
 - a blocked discovery job does not stop the signer from serving NIP-46 requests, but it does mean discovery publication needs attention
 - if startup recovery fails, fix the reported workflow or persistence inconsistency before treating the service as healthy
+- after file-level restore or JSON-to-SQLite migration, run `myc persistence verify-restore` before `myc run`
 
 For persistence layout and backup guidance, see [persistence.md](./persistence.md). For status and endpoint semantics, see [operability.md](./operability.md).

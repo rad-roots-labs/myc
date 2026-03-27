@@ -55,6 +55,7 @@ Publish flows are also durable:
 
 - listener responses, `connect accept`, auth replay, and discovery publication are written to a persistent delivery outbox before relay send
 - `myc run` performs startup recovery for unfinished delivery jobs before the service is treated as ready
+- after JSON-to-SQLite migration or file-level restore, run `myc persistence verify-restore` before `myc run`
 - see [`docs/delivery.md`](./docs/delivery.md) for the durable-delivery and restart-recovery contract
 
 Policy and auth are typed:
