@@ -67,11 +67,14 @@ Policy and auth are typed:
 Custody is backend-aware:
 
 - filesystem remains the default signer, user, and discovery app identity backend
-- `MYC_PATHS_SIGNER_IDENTITY_BACKEND` and `MYC_PATHS_USER_IDENTITY_BACKEND` support `filesystem` and `os_keyring`
-- `MYC_DISCOVERY_APP_IDENTITY_BACKEND` may be left unset to reuse the signer identity, or set explicitly for a dedicated filesystem or keyring-backed discovery app identity
+- `MYC_PATHS_SIGNER_IDENTITY_BACKEND` and `MYC_PATHS_USER_IDENTITY_BACKEND` support `filesystem`, `os_keyring`, and `managed_account`
+- `MYC_DISCOVERY_APP_IDENTITY_BACKEND` may be left unset to reuse the signer identity, or set explicitly for a dedicated filesystem, keyring-backed, or managed-account discovery app identity
+- `managed_account` stores selected public identities in an account-store file and secrets in the configured OS keyring namespace
+- `myc custody list|generate|import-file|select|remove` manages the selected signer, user, or discovery app identity when that role uses `managed_account`
 - `*_KEYRING_ACCOUNT_ID` selects the public identity id stored in the local keyring vault
 - `*_KEYRING_SERVICE_NAME` scopes the local keyring service name
-- `*_PROFILE_PATH` may be set for keyring-backed identities when local profile metadata should be merged onto the loaded secret
+- `*_PROFILE_PATH` may be set for `os_keyring` identities when local profile metadata should be merged onto the loaded secret
+- for `managed_account`, `*_PATH` points to the role-specific account store file
 - see [`docs/custody.md`](./docs/custody.md) for the backend contract and migration guidance
 
 Observability is local-only:
