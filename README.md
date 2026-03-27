@@ -91,6 +91,7 @@ Observability is local-only:
 - `myc status --view summary|full` emits machine-readable service status from the CLI
 - `myc metrics --format json|prometheus` emits stable runtime counters from a persisted-audit startup baseline plus live in-memory updates
 - `myc status` includes custody backend and resolution state for signer, user, and discovery app identities
+- `myc status` also includes signer backend capability projection for the local signer, active remote sessions, and active publish workflows
 - when enabled, the local admin server exposes `/healthz`, `/readyz`, `/status`, and `/metrics`
 
 See [`docs/operability.md`](./docs/operability.md) for the status, metrics, and endpoint contract.
