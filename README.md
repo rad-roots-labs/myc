@@ -63,6 +63,9 @@ Policy and auth are typed:
 - `MYC_POLICY_TRUSTED_CLIENT_PUBKEYS` and `MYC_POLICY_DENIED_CLIENT_PUBKEYS` override that default per client pubkey
 - `MYC_POLICY_PERMISSION_CEILING` and `MYC_POLICY_ALLOWED_SIGN_EVENT_KINDS` bound what can ever be granted or executed
 - `MYC_POLICY_AUTH_URL`, `MYC_POLICY_AUTH_PENDING_TTL_SECS`, `MYC_POLICY_AUTHORIZED_TTL_SECS`, and `MYC_POLICY_REAUTH_AFTER_INACTIVITY_SECS` control auth challenge expiry and trusted-session reauth
+- `MYC_POLICY_CONNECT_RATE_LIMIT_*` optionally throttles inbound `connect` attempts per client pubkey
+- `MYC_POLICY_AUTH_CHALLENGE_RATE_LIMIT_*` optionally throttles automatic auth challenge reissuance per trusted client pubkey
+- trusted sessions that have exceeded the configured auth TTL or inactivity reauth window are downgraded back to pending auth during bootstrap before `myc` starts serving requests
 
 Custody is backend-aware:
 
