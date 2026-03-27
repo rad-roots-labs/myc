@@ -120,6 +120,14 @@ cargo test --locked --test operability_cli
 cargo test --locked --test operability_server
 ```
 
+Run the final release-acceptance gate when preparing a production candidate:
+
+```bash
+./scripts/release-acceptance.sh
+```
+
+See [`docs/release.md`](./docs/release.md) for the exact matrix and the integrated-workspace consumer-side interop lanes.
+
 ## License
 
 This project is licensed under the AGPL-3.0.

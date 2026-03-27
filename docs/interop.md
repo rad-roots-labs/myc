@@ -42,3 +42,5 @@ cargo run --manifest-path testing/rs/platform-it/Cargo.toml -- suite myc-nip46
 ```
 
 These tests complement, but do not replace, the broader `nip46_e2e` relay harness. The native harness remains the source of truth for delivery policy, connect-secret consumption, discovery publication, and targeted repair semantics.
+
+For the final production release gate, run [`./scripts/release-acceptance.sh`](../scripts/release-acceptance.sh) from the `myc` repo root. That lane composes the repo-local proof surface with the consumer-side live suites when the integrated workspace is available.
