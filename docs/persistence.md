@@ -86,27 +86,50 @@ The SQLite-backed stores are the production path because they add:
 
 ## backup and restore
 
-For the safest file-level backup:
+`myc` now provides first-class offline backup and restore commands around the configured persistence contract.
 
-1. stop `myc`
-2. copy the configured state directory
-3. copy any file-backed identity material still in use
+Create a backup:
 
-If SQLite backends are active and you cannot stop the service, use SQLite-aware backup tooling or ensure the main `.sqlite` file and any `-wal` and `-shm` sidecars are kept consistent.
+```bash
+cargo run -- persistence backup --out /path/to/backup-dir
+```
 
-Restore rules:
+Restore a backup into a fresh destination config:
 
-- restore persistence files and identity sources together
-- do not mix signer-state from one signer identity with a different configured signer identity
-- if file-based identities are used, restore those identity files together with the state directory
-- if keyring-backed identities are used, restore the database files and separately ensure the expected keyring entries exist
-- if durable delivery is enabled, restore the delivery outbox together with signer state and runtime audit so unfinished publish work can still be recovered correctly
+```bash
+cargo run -- persistence restore --from /path/to/backup-dir
+```
 
-After restoring files and identities, run:
+Then run the strict preflight before `myc run`:
 
 ```bash
 cargo run -- persistence verify-restore
 ```
+
+Backup and restore rules:
+
+- stop `myc` before running backup or restore
+- `backup --out` requires an empty or nonexistent destination directory
+- `restore --from` requires an empty or nonexistent destination state directory
+- restore will not overwrite existing identity-reference files
+- do not mix signer-state from one signer identity with a different configured signer identity
+- restore persistence files and identity sources together
+- keep the delivery outbox with signer state and runtime audit so unfinished publish work can still be recovered correctly
+
+What `backup` copies:
+
+- the full configured `state_dir`, including signer state, runtime audit, delivery outbox, SQLite sidecars, and future persistence files
+- `filesystem` identity files
+- `managed_account` account-store files
+- `os_keyring` optional profile files when configured
+
+What `backup` does not embed:
+
+- OS keyring secrets
+- `external_command` helper executables
+- other out-of-band custody dependencies
+
+For `os_keyring`, `managed_account`, and `external_command`, the backup manifest records the expected backend contract. `restore` requires the current config to match that contract and copies only the reference files that belong in the backup.
 
 `verify-restore` is a strict preflight for migrated or restored deployments. It verifies:
 
@@ -114,6 +137,17 @@ cargo run -- persistence verify-restore
 - signer and user identities resolve from the current custody configuration
 - persisted signer identity matches the configured signer identity
 - unfinished delivery outbox jobs and persisted signer publish workflows are internally coherent before startup recovery runs
+
+The recommended backup/restore flow is:
+
+1. stop `myc`
+2. run `myc persistence backup --out ...`
+3. move the backup directory to the target machine or restore location
+4. configure the target environment with matching persistence backends and custody contracts
+5. run `myc persistence restore --from ...`
+6. run `myc persistence verify-restore`
+7. run `myc status --view full` and confirm the persistence and delivery sections are ready
+8. start `myc run`
 
 ## recommended rollout
 
