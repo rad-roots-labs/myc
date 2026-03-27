@@ -56,6 +56,8 @@ The server is read-only. It does not expose connection approval, auth, or discov
 
 Status output includes custody state for the signer, managed user, and discovery app identities, including the configured backend and whether each identity resolved successfully.
 
+In full status output, `startup.signer_identity_path` and `startup.user_identity_path` are only present for identity backends that actually resolve from a path. Use the `custody` section as the source of truth for backend-specific identity source details.
+
 Status output also includes persistence state for signer state and runtime audit, including backend, resolved path, and SQLite schema readiness when SQLite is enabled. See [persistence.md](./persistence.md) for the persistence operator contract.
 
 Status output also includes `delivery_outbox`, which reports the durable publish queue path, unfinished job counts, blocked job counts, stuck thresholds, and the last startup recovery result. See [delivery.md](./delivery.md) for the durable-delivery contract.
