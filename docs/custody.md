@@ -9,12 +9,15 @@ Supported backends:
 - `filesystem`
 - `os_keyring`
 - `managed_account`
+- `external_command`
 
 `filesystem` remains the default backend for all identities.
 
 `os_keyring` loads the secret key from the local OS keyring and reconstructs the identity in memory at runtime.
 
 `managed_account` uses a role-specific account store file plus the local OS keyring. The account store keeps public identity metadata and the selected account pointer; the keyring service keeps the secret material.
+
+`external_command` executes a role-specific helper program over JSON stdin/stdout. The helper exposes public identity, event signing, `nip04`, and `nip44` operations without requiring `myc` to load that role's secret into the `myc` process.
 
 ## config
 
@@ -61,12 +64,76 @@ For `managed_account`:
 - `*_PROFILE_PATH` must stay unset
 - the selected account in the store is the active runtime identity for that role
 
+For `external_command`:
+
+- `*_PATH` must point to an executable helper for that role
+- `*_KEYRING_ACCOUNT_ID` must stay unset
+- `*_KEYRING_SERVICE_NAME` must stay unset
+- `*_PROFILE_PATH` must stay unset
+- the helper must accept a JSON request on stdin and return a JSON response on stdout
+- the helper owns the secret material; `myc` only receives public identity metadata plus signing/crypto results
+
 `myc` verifies that:
 
 - the resolved secret matches the configured keyring account id for `os_keyring`
 - any configured profile file matches the same public identity for `os_keyring`
 - the selected managed account has a secret in the configured keyring service before runtime boot
 - the persisted signer-state public identity still matches the configured signer identity
+- an `external_command` helper returns a valid public identity whose id matches its `public_key_hex`
+
+## external command protocol
+
+`external_command` helpers speak a simple JSON protocol.
+
+Input:
+
+```json
+{
+  "version": 1,
+  "operation": "describe"
+}
+```
+
+Supported `operation` values:
+
+- `describe`
+- `sign_event`
+- `nip04_encrypt`
+- `nip04_decrypt`
+- `nip44_encrypt`
+- `nip44_decrypt`
+
+For `sign_event`, `myc` sends:
+
+```json
+{
+  "version": 1,
+  "operation": "sign_event",
+  "unsigned_event": { "...": "nostr unsigned event" }
+}
+```
+
+For `nip04_*` and `nip44_*`, `myc` sends:
+
+```json
+{
+  "version": 1,
+  "operation": "nip44_encrypt",
+  "public_key_hex": "<peer pubkey>",
+  "content": "<plaintext or ciphertext>"
+}
+```
+
+Responses use one of:
+
+```json
+{ "identity": { "...": "RadrootsIdentityPublic" } }
+{ "event": { "...": "signed nostr event" } }
+{ "content": "<ciphertext or plaintext>" }
+{ "error": "human readable failure" }
+```
+
+Helpers must exit non-zero on fatal execution failure. `myc` treats non-zero exit status or an `error` response as custody failure.
 
 ## lifecycle commands
 
@@ -94,11 +161,14 @@ These commands only apply when that role uses `managed_account`. If discovery cu
 
 - which backend is active for signer, user, and discovery app identities
 - the configured backend path
+- for `external_command`, the configured backend path is the helper executable path
 - any configured keyring account id or keyring service name
 - for `managed_account`, the selected account id and selection state
 - whether each identity resolved successfully
 
 For `managed_account`, `path` in the custody status is the account store file path.
+
+For `external_command`, `path` in the custody status is the helper executable path.
 
 ## migration
 
