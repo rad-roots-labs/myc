@@ -85,7 +85,7 @@ Observability is local-only:
 - `MYC_OBSERVABILITY_ENABLED=true` enables the read-only admin surface
 - `MYC_OBSERVABILITY_BIND_ADDR` must stay on a loopback address such as `127.0.0.1:9460`
 - `myc status --view summary|full` emits machine-readable service status from the CLI
-- `myc metrics --format json|prometheus` emits stable runtime counters from retained audit state
+- `myc metrics --format json|prometheus` emits stable runtime counters from a persisted-audit startup baseline plus live in-memory updates
 - `myc status` includes custody backend and resolution state for signer, user, and discovery app identities
 - when enabled, the local admin server exposes `/healthz`, `/readyz`, `/status`, and `/metrics`
 

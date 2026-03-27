@@ -102,7 +102,7 @@ Delivery outbox health affects readiness separately from relay reachability:
 
 ## counters
 
-The metrics surface is derived from retained signer-request audit and retained runtime operation audit.
+The metrics surface bootstraps from retained signer-request audit and retained runtime operation audit at startup, then stays live in memory for the rest of the process lifetime.
 
 It includes:
 
@@ -117,4 +117,4 @@ It includes:
 - delivery outbox totals by state
 - unfinished and blocked delivery outbox totals, including critical subsets
 
-Because the metrics are built from retained audit state, they reflect the retained audit window rather than a separate in-memory counter stream.
+This keeps `myc metrics` and `/metrics` off the hot path of full audit rescans while preserving the retained audit history as the startup baseline.
