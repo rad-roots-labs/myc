@@ -19,14 +19,14 @@ Current repo-local compatibility coverage:
 
 Current consumer-side live compatibility coverage outside this repo:
 
-- `connect`, `ping`, and `switch_relays` through the `platform-it` `myc-nip46` suite
+- `connect`, `ping`, and `switch_relays` through the `platform-integration` `myc-nip46` suite
 - requested-permission negotiation for `switch_relays`, including persistence of the requested and granted permission set on the live `myc` signer state
 - direct verification of the live listener publish audit emitted for external client request ids
 
 Current known boundary:
 
-- `switch_relays` is not covered by the pinned upstream `nostr` `0.44.2` lane because that crate surface does not expose that request type, but it is now covered by the consumer-side live `platform-it` lane
-- the pinned upstream `nostr` `0.44.2` connect request shape does not carry requested permissions, so requested-permission negotiation is proven through the consumer-side live `platform-it` lane instead of the upstream typed lane
+- `switch_relays` is not covered by the pinned upstream `nostr` `0.44.2` lane because that crate surface does not expose that request type, but it is now covered by the consumer-side live `platform-integration` lane
+- the pinned upstream `nostr` `0.44.2` connect request shape does not carry requested permissions, so requested-permission negotiation is proven through the consumer-side live `platform-integration` lane instead of the upstream typed lane
 - the app remote signer product-client onboarding proof is maintained outside this repo because it validates the consumer-side service boundary rather than a repo-local unit or integration seam; that lane covers bunker and discovery-url initiation, pending approval, restart before approval, and approved identity resolution through the current client poll flow
 
 Run the repo-local compatibility lane from this repo root with:
@@ -38,7 +38,7 @@ cargo test --locked --test nip46_e2e external_nostr_client
 Run the consumer-side live compatibility lane from the outer repo root with:
 
 ```bash
-cargo run --manifest-path testing/rs/platform-it/Cargo.toml -- suite myc-nip46
+cargo run --manifest-path testing/rs/platform-integration/Cargo.toml -- suite myc-nip46
 ```
 
 These tests complement, but do not replace, the broader `nip46_e2e` relay harness. The native harness remains the source of truth for delivery policy, connect-secret consumption, discovery publication, and targeted repair semantics.
