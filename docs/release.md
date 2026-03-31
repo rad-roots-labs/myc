@@ -45,3 +45,6 @@ MYC_RELEASE_ACCEPTANCE_SKIP_PLATFORM_INTEGRATION=1 ./scripts/release-acceptance.
 ```
 
 Use that override only when the live consumer-side environment is intentionally unavailable. It is not the canonical production release gate inside the integrated workspace.
+
+For the current relay-backed stability analysis and reproduction split, see
+[`docs/release-acceptance-stability.md`](./release-acceptance-stability.md).
