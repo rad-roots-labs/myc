@@ -99,22 +99,27 @@ See [`docs/delivery.md`](./docs/delivery.md) for delivery outbox, startup recove
 
 ## Validation
 
-Run the full repo-root validation lane:
+This repository uses Nix as the canonical local validation surface:
 
 ```bash
-cargo metadata --format-version 1 --no-deps
-cargo check --locked
-cargo test --locked
-cargo fmt --all --check
+nix run .#fmt
+nix run .#check
+nix run .#test
 ```
 
-Run the relay-backed NIP-46 proof lane directly when you want the transport/discovery end-to-end suite:
+Enter the repo shell when you want narrower focused cargo commands:
+
+```bash
+nix develop
+```
+
+Run the relay-backed NIP-46 proof lane directly inside the shell when you want the transport/discovery end-to-end suite:
 
 ```bash
 cargo test --locked --test nip46_e2e
 ```
 
-Run the operability-focused lanes directly when you want CLI and admin-surface proof:
+Run the operability-focused lanes directly inside the shell when you want CLI and admin-surface proof:
 
 ```bash
 cargo test --locked --test operability_cli
@@ -124,7 +129,7 @@ cargo test --locked --test operability_server
 Run the final release-acceptance gate when preparing a production candidate:
 
 ```bash
-./scripts/release-acceptance.sh
+nix run .#release-acceptance
 ```
 
 See [`docs/release.md`](./docs/release.md) for the exact matrix and the integrated-workspace consumer-side interop lanes.
