@@ -1,6 +1,6 @@
 # release acceptance stability
 
-This note captures the `rpv1-i7w.1` isolation pass for the `myc`
+This note captures the `rpv1-i7w` stabilization work for the `myc`
 `release-acceptance` flake.
 
 ## current composition
@@ -16,6 +16,23 @@ This note captures the `rpv1-i7w.1` isolation pass for the `myc`
   - `myc-app-remote-signer`
 
 That composition is defined in [`scripts/release-acceptance.sh`](../scripts/release-acceptance.sh).
+
+## current status
+
+As of `rpv1-i7w.3`, the full gate is green again.
+
+- two consecutive full `nix run .#release-acceptance` passes succeeded on
+  `2026-03-31`
+- the first proof pass completed with:
+  - `myc-nip46`:
+    `/Users/treesap/dev/radroots/radroots-platform-v1/.local/test-runs/platform-integration/myc-nip46/run-1774982802364755000`
+  - `myc-app-remote-signer`:
+    `/Users/treesap/dev/radroots/radroots-platform-v1/.local/test-runs/platform-integration/myc-app-remote-signer/run-1774982951820916000`
+- the second proof pass completed with:
+  - `myc-nip46`:
+    `/Users/treesap/dev/radroots/radroots-platform-v1/.local/test-runs/platform-integration/myc-nip46/run-1774983130096599000`
+  - `myc-app-remote-signer`:
+    `/Users/treesap/dev/radroots/radroots-platform-v1/.local/test-runs/platform-integration/myc-app-remote-signer/run-1774983279477624000`
 
 ## pressure-test result
 
@@ -40,6 +57,10 @@ The likely flake class is therefore:
 - relay-backed tests that usually pass in isolation
 - but can exceed short fixed waits when the composed acceptance lane is under
   heavier load
+
+`rpv1-i7w.2` addressed that class by increasing the readiness, relay publication,
+and response budgets in the repo-local relay-backed tests and the consumer-side
+`platform-integration` suites.
 
 ## primary suspect
 
@@ -67,6 +88,19 @@ Repeated pressure-testing also showed that acceptance probes contend on the shar
 cargo target directory under `.local/build/cargo`. That contention is not the
 root flake itself, but it is a real destabilizer for repeated release-gate
 stress runs because overlapping probes block on the same build lock.
+
+## host-runtime constraint
+
+The remaining observed red state during `rpv1-i7w.3` was not a `myc` logic
+failure. The local OrbStack Docker daemon temporarily stopped responding and
+left `docker info` hanging or returning socket-level connect errors while the
+consumer-side relay stack was being prepared.
+
+That surfaced through the root relay-stack helpers, not through `myc` itself.
+The relay stack helper now applies bounded timeout-and-retry handling for
+transient Docker daemon failures so the acceptance lane no longer wedges
+forever on a dead socket. A fully stopped local Docker daemon will still keep
+the consumer-side suites red until the host runtime is brought back.
 
 ## reproduction split
 
@@ -98,13 +132,12 @@ MYC_RELEASE_ACCEPTANCE_SKIP_PLATFORM_INTEGRATION=1 \
 '
 ```
 
-## follow-up target
+## residual constraints
 
-The next slice should stay narrow:
-
-- harden the relay-backed acceptance waits so they are deterministic under the
-  composed release gate
-- keep the fix focused on readiness/publish timing rather than unrelated `myc`
-  behavior
-- only address shared cargo target contention if it is still needed after the
-  timing hardening
+- run repeated full-gate proofs serially when possible so unrelated cargo work
+  does not contend on `.local/build/cargo`
+- keep an eye on free disk space before long repeated proofs because
+  `.local/build/cargo` can grow significantly during cold rebuilds
+- if the local Docker daemon is hard-down rather than transiently unhealthy,
+  restore it first; the consumer-side relay suites are intentionally real and
+  still require a working local container runtime
