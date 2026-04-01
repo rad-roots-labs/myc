@@ -24,15 +24,11 @@ As of `rpv1-i7w.3`, the full gate is green again.
 - two consecutive full `nix run .#release-acceptance` passes succeeded on
   `2026-03-31`
 - the first proof pass completed with:
-  - `myc-nip46`:
-    `/Users/treesap/dev/radroots/radroots-platform-v1/.local/test-runs/platform-integration/myc-nip46/run-1774982802364755000`
-  - `myc-app-remote-signer`:
-    `/Users/treesap/dev/radroots/radroots-platform-v1/.local/test-runs/platform-integration/myc-app-remote-signer/run-1774982951820916000`
+  - `myc-nip46` run `1774982802364755000`
+  - `myc-app-remote-signer` run `1774982951820916000`
 - the second proof pass completed with:
-  - `myc-nip46`:
-    `/Users/treesap/dev/radroots/radroots-platform-v1/.local/test-runs/platform-integration/myc-nip46/run-1774983130096599000`
-  - `myc-app-remote-signer`:
-    `/Users/treesap/dev/radroots/radroots-platform-v1/.local/test-runs/platform-integration/myc-app-remote-signer/run-1774983279477624000`
+  - `myc-nip46` run `1774983130096599000`
+  - `myc-app-remote-signer` run `1774983279477624000`
 
 ## pressure-test result
 
