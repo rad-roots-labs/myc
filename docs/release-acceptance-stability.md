@@ -30,6 +30,17 @@ As of `rpv1-i7w.3`, the full gate is green again.
   - `myc-nip46` run `1774983130096599000`
   - `myc-app-remote-signer` run `1774983279477624000`
 
+As of `rpv1-9z7.6`, the full gate is green again after the review-fix line.
+
+- two consecutive full `nix run .#release-acceptance` passes succeeded on
+  `2026-04-01`
+- the first renewed proof pass completed with:
+  - `myc-nip46` run `1775086812605874000`
+  - `myc-app-remote-signer` run `1775086902440443000`
+- the second renewed proof pass completed with:
+  - `myc-nip46` run `1775087053887601000`
+  - `myc-app-remote-signer` run `1775087141682749000`
+
 ## pressure-test result
 
 The instability is not currently isolated to a deterministic logic regression in
