@@ -71,15 +71,17 @@ Policy and auth are typed:
 
 Custody is backend-aware:
 
-- filesystem remains the default signer, user, and discovery app identity backend
-- `MYC_PATHS_SIGNER_IDENTITY_BACKEND` and `MYC_PATHS_USER_IDENTITY_BACKEND` support `filesystem`, `os_keyring`, `managed_account`, and `external_command`
-- `MYC_DISCOVERY_APP_IDENTITY_BACKEND` may be left unset to reuse the signer identity, or set explicitly for a dedicated filesystem, keyring-backed, managed-account, or external-command discovery app identity
+- `encrypted_file` remains the default signer, user, and discovery app identity backend
+- `MYC_PATHS_SIGNER_IDENTITY_BACKEND` and `MYC_PATHS_USER_IDENTITY_BACKEND` support `encrypted_file`, `host_vault`, `managed_account`, `external_command`, and `plaintext_file`
+- `MYC_DISCOVERY_APP_IDENTITY_BACKEND` may be left unset to reuse the signer identity, or set explicitly for a dedicated `encrypted_file`, `host_vault`, `managed_account`, `external_command`, or `plaintext_file` discovery app identity
 - `managed_account` stores selected public identities in an account-store file and secrets in the configured OS keyring namespace
 - `external_command` executes a role-specific signer helper over JSON stdin/stdout, so `myc` can request public identity, signing, `nip04`, and `nip44` operations without loading that role's secret into the `myc` process
+- `myc custody status` reports backend-specific status for a single role
+- `myc custody export-nip49|import-nip49|rotate` provides explicit operator-facing NIP-49 import/export and backend-specific storage rotation where supported
 - `myc custody list|generate|import-file|select|remove` manages the selected signer, user, or discovery app identity when that role uses `managed_account`
 - `*_KEYRING_ACCOUNT_ID` selects the public identity id stored in the local keyring vault
 - `*_KEYRING_SERVICE_NAME` scopes the local keyring service name
-- `*_PROFILE_PATH` may be set for `os_keyring` identities when local profile metadata should be merged onto the loaded secret
+- `*_PROFILE_PATH` may be set for `host_vault` identities when local profile metadata should be merged onto the loaded secret
 - for `managed_account`, `*_PATH` points to the role-specific account store file
 - for `external_command`, `*_PATH` points to the helper executable for that role
 - see [`docs/custody.md`](./docs/custody.md) for the backend contract and migration guidance

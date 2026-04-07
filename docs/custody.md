@@ -6,18 +6,21 @@
 
 Supported backends:
 
-- `filesystem`
-- `os_keyring`
+- `encrypted_file`
+- `host_vault`
 - `managed_account`
 - `external_command`
+- `plaintext_file`
 
-`filesystem` remains the default backend for all identities.
+`encrypted_file` remains the default backend for all identities.
 
-`os_keyring` loads the secret key from the local OS keyring and reconstructs the identity in memory at runtime.
+`host_vault` loads the secret key from the local OS keyring and reconstructs the identity in memory at runtime.
 
 `managed_account` uses a role-specific account store file plus the local OS keyring. The account store keeps public identity metadata and the selected account pointer; the keyring service keeps the secret material.
 
 `external_command` executes a role-specific helper program over JSON stdin/stdout. The helper exposes public identity, event signing, `nip04`, and `nip44` operations without requiring `myc` to load that role's secret into the `myc` process.
+
+`plaintext_file` remains available only for explicit local-development or migration lanes where protected local secret storage is not yet in use.
 
 ## config
 
@@ -46,11 +49,11 @@ When `MYC_DISCOVERY_APP_IDENTITY_BACKEND` is unset and `MYC_DISCOVERY_APP_IDENTI
 
 ## semantics
 
-For `filesystem`:
+For `encrypted_file`:
 
-- `*_PATH` must point to a loadable Radroots identity file
+- `*_PATH` must point to a loadable `myc` encrypted identity file
 
-For `os_keyring`:
+For `host_vault`:
 
 - `*_KEYRING_ACCOUNT_ID` must be the public identity id for the secret stored in the keyring
 - `*_KEYRING_SERVICE_NAME` selects the local keyring namespace
@@ -73,10 +76,16 @@ For `external_command`:
 - the helper must accept a JSON request on stdin and return a JSON response on stdout
 - the helper owns the secret material; `myc` only receives public identity metadata plus signing/crypto results
 
+For `plaintext_file`:
+
+- `*_PATH` must point to a loadable Radroots identity file
+- use it only when explicitly accepting plaintext local secret storage
+- `custody rotate` is intentionally unsupported for this backend
+
 `myc` verifies that:
 
-- the resolved secret matches the configured keyring account id for `os_keyring`
-- any configured profile file matches the same public identity for `os_keyring`
+- the resolved secret matches the configured keyring account id for `host_vault`
+- any configured profile file matches the same public identity for `host_vault`
 - the selected managed account has a secret in the configured keyring service before runtime boot
 - the persisted signer-state public identity still matches the configured signer identity
 - an `external_command` helper returns a valid public identity whose id matches its `public_key_hex`
@@ -137,9 +146,13 @@ Helpers must exit non-zero on fatal execution failure. `myc` treats non-zero exi
 
 ## lifecycle commands
 
-`managed_account` adds explicit local key lifecycle commands:
+`myc custody` exposes explicit operator-facing role lifecycle commands:
 
 ```bash
+cargo run -- custody status --role signer
+cargo run -- custody export-nip49 --role signer --out ./signer.ncryptsec --password-env MYC_NIP49_PASSWORD
+cargo run -- custody import-nip49 --role signer --path ./signer.ncryptsec --password-env MYC_NIP49_PASSWORD
+cargo run -- custody rotate --role signer
 cargo run -- custody list --role signer
 cargo run -- custody generate --role signer --label primary --select
 cargo run -- custody import-file --role user --path ./user-identity.json --label migrated --select
@@ -147,13 +160,17 @@ cargo run -- custody select --role signer --account-id <identity-id>
 cargo run -- custody remove --role signer --account-id <identity-id>
 ```
 
+`status`, `export-nip49`, and `import-nip49` work across every secret-bearing backend except `external_command`, which never materializes secret key material inside `myc`.
+
+`rotate` currently applies only to `encrypted_file`; other backends report an explicit unsupported result instead of relying on manual hidden file edits.
+
 Supported roles are:
 
 - `signer`
 - `user`
 - `discovery-app`
 
-These commands only apply when that role uses `managed_account`. If discovery currently reuses the signer identity, `--role discovery-app` is rejected until a dedicated discovery backend is configured.
+`list`, `generate`, `import-file`, `select`, and `remove` only apply when that role uses `managed_account`. If discovery currently reuses the signer identity, `--role discovery-app` is rejected until a dedicated discovery backend is configured.
 
 ## status
 
@@ -172,7 +189,7 @@ For `external_command`, `path` in the custody status is the helper executable pa
 
 ## migration
 
-The safest path from `filesystem` to `managed_account` is:
+The safest path from `encrypted_file` to `managed_account` is:
 
 1. choose a role-specific account store path
 2. switch that role to `managed_account`
@@ -180,7 +197,7 @@ The safest path from `filesystem` to `managed_account` is:
 4. verify `myc status --view full` shows the role as resolved with `selected_account_state=ready`
 5. remove the legacy identity file only after the new backend is working as expected
 
-The safest path from `os_keyring` to `managed_account` is:
+The safest path from `host_vault` to `managed_account` is:
 
 1. keep the same keyring service name if you want to preserve the local secret namespace
 2. import or generate the managed account for that role
