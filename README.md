@@ -34,15 +34,41 @@ Mycorrhiza is a Nostr remote signer that implements the NIP-46 specification. It
 
 ## Runtime Config
 
-`myc` loads its runtime configuration from `.env` in the repo root by default.
+`myc` loads its runtime configuration from the canonical `config.env` path for the
+active runtime profile unless `--env-file` is passed explicitly.
 
-Use `.env.example` as the checked starting point:
+Default profile posture:
+
+- manual operator runs default to `interactive_user`
+- managed-service wrappers should set `MYC_PATHS_PROFILE=service_host`
+- repo-local labs may set `MYC_PATHS_PROFILE=repo_local` together with `MYC_PATHS_REPO_LOCAL_ROOT`
+
+Canonical default config locations:
+
+- macOS/Linux `interactive_user`: `~/.radroots/config/services/myc/config.env`
+- Windows `interactive_user`: `%APPDATA%\\Radroots\\config\\services\\myc\\config.env`
+- `service_host`: `/etc/radroots/services/myc/config.env`
+
+The checked-in `.env.example` is a canonical `service_host` sample.
+Use it either as the file you pass to `--env-file`, or copy it into the resolved runtime location:
 
 ```bash
-cp .env.example .env
+cp .env.example /etc/radroots/services/myc/config.env
 ```
 
-Then replace the example paths, relays, and discovery host with real local values before running the service.
+For local ad hoc runs on macOS/Linux, copy the same file into `~/.radroots/config/services/myc/config.env`
+and change `MYC_PATHS_PROFILE` to `interactive_user`, or omit that line entirely.
+
+When you keep the canonical profile-derived defaults, do not set the path variables explicitly.
+`myc` will derive:
+
+- logs under the runtime logs root
+- state under the runtime data root
+- encrypted-file identities under the runtime secrets root
+- discovery `nostr.json` output under the runtime data root
+
+Only set `MYC_LOGGING_OUTPUT_DIR`, `MYC_PATHS_STATE_DIR`, `MYC_PATHS_*_IDENTITY_PATH`,
+or `MYC_DISCOVERY_NIP05_OUTPUT_PATH` when you intentionally want a non-canonical override.
 
 Transport delivery is explicit:
 
@@ -76,6 +102,7 @@ Custody is backend-aware:
 - `MYC_DISCOVERY_APP_IDENTITY_BACKEND` may be left unset to reuse the signer identity, or set explicitly for a dedicated `encrypted_file`, `host_vault`, `managed_account`, `external_command`, or `plaintext_file` discovery app identity
 - `managed_account` stores selected public identities in an account-store file and secrets in the configured OS keyring namespace
 - `external_command` executes a role-specific signer helper over JSON stdin/stdout, so `myc` can request public identity, signing, `nip04`, and `nip44` operations without loading that role's secret into the `myc` process
+- the canonical default identity and account-store file locations are derived from `MYC_PATHS_PROFILE`
 - `myc custody status` reports backend-specific status for a single role
 - `myc custody export-nip49|import-nip49|rotate` provides explicit operator-facing NIP-49 import/export and backend-specific storage rotation where supported
 - `myc custody list|generate|import-file|select|remove` manages the selected signer, user, or discovery app identity when that role uses `managed_account`

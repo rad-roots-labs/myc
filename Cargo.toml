@@ -26,6 +26,7 @@ radroots-nostr = { path = "../../../../foundation/libs/rs/radroots/crates/nostr"
 radroots-nostr-connect = { path = "../../../../foundation/libs/rs/radroots/crates/nostr-connect" }
 radroots-nostr-signer = { path = "../../../../foundation/libs/rs/radroots/crates/nostr-signer", features = ["native"] }
 radroots-protected-store = { path = "../../../../foundation/libs/rs/radroots/crates/protected-store" }
+radroots-runtime-paths = { path = "../../../../foundation/libs/rs/radroots/crates/runtime-paths" }
 radroots-secret-vault = { path = "../../../../foundation/libs/rs/radroots/crates/secret-vault", features = ["std", "os-keyring"] }
 radroots-sql-core = { path = "../../../../foundation/libs/rs/radroots/crates/sql-core", features = ["native"] }
 serde = { version = "1.0", features = ["derive"] }
