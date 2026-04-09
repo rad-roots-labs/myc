@@ -1,0 +1,13 @@
+# myc
+
+This is the README for `myc` which enables remote signing for standalone
+or application-embedded Nostr clients communicating on the Rad Roots network.
+
+## Copyright
+
+Except as otherwise noted, all files in the `myc` distribution are
+
+    Copyright (c) 2020-2026 Tyson Lupul and others.
+
+For information on usage and redistribution, and for a DISCLAIMER OF ALL
+WARRANTIES, see LICENSE included in the `myc` distribution.
