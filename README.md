@@ -41,7 +41,9 @@ Default profile posture:
 
 - manual operator runs default to `interactive_user`
 - managed-service wrappers should set `MYC_PATHS_PROFILE=service_host`
-- repo-local labs may set `MYC_PATHS_PROFILE=repo_local` together with `MYC_PATHS_REPO_LOCAL_ROOT`
+- repo-local labs should prefer the root `.env.local` control plane plus
+  `scripts/dev/lib/radroots-runtime-env.sh`, which derives `MYC_PATHS_PROFILE=repo_local` and
+  `MYC_PATHS_REPO_LOCAL_ROOT` automatically
 
 Canonical default config locations:
 
@@ -58,6 +60,9 @@ cp .env.example /etc/radroots/services/myc/config.env
 
 For local ad hoc runs on macOS/Linux, copy the same file into `~/.radroots/config/services/myc/config.env`
 and change `MYC_PATHS_PROFILE` to `interactive_user`, or omit that line entirely.
+
+For repo-owned local runs inside the outer monorepo, prefer the shared root control plane in
+`.env.local` instead of editing repo-local `MYC_PATHS_*` values by hand.
 
 When you keep the canonical profile-derived defaults, do not set the path variables explicitly.
 `myc` will derive:
