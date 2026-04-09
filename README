@@ -3,6 +3,31 @@
 This is the README for `myc` which enables remote signing for standalone
 or application-embedded Nostr clients communicating on the Rad Roots network.
 
+## Runtime Paths
+
+`myc` uses the shared Radroots path contract for its profile-derived local
+filesystem roots.
+
+For normal operation, choose the profile/root control plane and let `myc`
+derive logs, run files, state, custody files, discovery identity, and NIP-05
+output from that profile:
+
+    MYC_PATHS_PROFILE=interactive_user
+    MYC_PATHS_PROFILE=service_host
+    MYC_PATHS_PROFILE=repo_local
+    MYC_PATHS_REPO_LOCAL_ROOT=/path/to/repo/.radroots
+
+Absolute leaf path keys such as `MYC_PATHS_STATE_DIR`,
+`MYC_PATHS_SIGNER_IDENTITY_PATH`, and `MYC_DISCOVERY_NIP05_OUTPUT_PATH` are
+compatibility / break-glass overrides. Keep them in the `config.env` artifact
+only when an individual subordinate path must diverge from the shared runtime
+path contract; do not treat them as the normal process environment API.
+
+The machine-readable status output includes
+`runtime_contract.path_overrides` so orchestration and integration tests can
+assert the canonical root-selection source, subordinate override source, and
+compatibility leaf-path-key posture.
+
 ## Copyright
 
 Except as otherwise noted, all files in the `myc` distribution are
