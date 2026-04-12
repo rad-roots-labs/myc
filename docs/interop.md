@@ -38,7 +38,7 @@ cargo test --locked --test nip46_e2e external_nostr_client
 Run the consumer-side live compatibility lane from the outer repo root with:
 
 ```bash
-cargo run --manifest-path testing/rs/platform-integration/Cargo.toml -- suite myc-nip46
+cargo run --manifest-path testing/rs/platform_integration/Cargo.toml -- suite myc-nip46
 ```
 
 These tests complement, but do not replace, the broader `nip46_e2e` relay harness. The native harness remains the source of truth for delivery policy, connect-secret consumption, discovery publication, and targeted repair semantics.

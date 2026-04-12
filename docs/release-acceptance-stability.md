@@ -133,7 +133,7 @@ MYC_RELEASE_ACCEPTANCE_SKIP_PLATFORM_INTEGRATION=1 \
 ```bash
 /nix/var/nix/profiles/default/bin/nix develop --command bash -lc '
   export PATH="${HOME}/.rustup/toolchains/1.92.0-aarch64-apple-darwin/bin:$PATH"
-  manifest="/path/to/integrated-workspace/testing/rs/platform-integration/Cargo.toml"
+  manifest="/path/to/integrated-workspace/testing/rs/platform_integration/Cargo.toml"
   cargo run --manifest-path "$manifest" -- suite myc-nip46
   cargo run --manifest-path "$manifest" -- suite myc-app-remote-signer
 '

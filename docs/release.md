@@ -19,9 +19,9 @@ Repo-local validation from the `myc` root:
 
 Consumer-side live compatibility from the integrated workspace when available:
 
-- `cargo check --manifest-path testing/rs/platform-integration/Cargo.toml`
-- `cargo run --manifest-path testing/rs/platform-integration/Cargo.toml -- suite myc-nip46`
-- `cargo run --manifest-path testing/rs/platform-integration/Cargo.toml -- suite myc-app-remote-signer`
+- `cargo check --manifest-path testing/rs/platform_integration/Cargo.toml`
+- `cargo run --manifest-path testing/rs/platform_integration/Cargo.toml -- suite myc-nip46`
+- `cargo run --manifest-path testing/rs/platform_integration/Cargo.toml -- suite myc-app-remote-signer`
 
 ## what this gate proves
 
@@ -36,7 +36,7 @@ Consumer-side live compatibility from the integrated workspace when available:
 
 When `myc` is checked out inside the integrated Radroots workspace, the acceptance lane automatically runs the consumer-side `platform-integration` suites.
 
-When `myc` is checked out standalone and `testing/rs/platform-integration/Cargo.toml` is not present, the script prints a skip notice and runs the repo-local release gate only.
+When `myc` is checked out standalone and `testing/rs/platform_integration/Cargo.toml` is not present, the script prints a skip notice and runs the repo-local release gate only.
 
 You can also skip the consumer-side live lanes explicitly:
 

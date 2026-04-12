@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
-platform_integration_manifest="$(cd "$repo_root/../../../../" && pwd)/testing/rs/platform-integration/Cargo.toml"
+platform_integration_manifest="$(cd "$repo_root/../../../../" && pwd)/testing/rs/platform_integration/Cargo.toml"
 
 run() {
   printf '+ %s\n' "$*"
