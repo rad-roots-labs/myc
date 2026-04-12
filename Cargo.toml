@@ -25,7 +25,6 @@ radroots_nostr_accounts = { path = "../../../../foundation/libs/rs/radroots/crat
 radroots_nostr = { path = "../../../../foundation/libs/rs/radroots/crates/nostr", features = ["client", "events"] }
 radroots_nostr_connect = { path = "../../../../foundation/libs/rs/radroots/crates/nostr_connect" }
 radroots_nostr_signer = { path = "../../../../foundation/libs/rs/radroots/crates/nostr_signer", features = ["native"] }
-radroots_protected_store = { path = "../../../../foundation/libs/rs/radroots/crates/protected_store", features = ["std"] }
 radroots_runtime_paths = { path = "../../../../foundation/libs/rs/radroots/crates/runtime_paths" }
 radroots_secret_vault = { path = "../../../../foundation/libs/rs/radroots/crates/secret_vault", features = ["std", "os-keyring"] }
 radroots_sql_core = { path = "../../../../foundation/libs/rs/radroots/crates/sql_core", features = ["native"] }
